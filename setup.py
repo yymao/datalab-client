@@ -1,28 +1,4 @@
-
-from distutils.core import setup
-import sys
-import os
-from vos.__version__ import version
-
-if sys.version_info[0] > 2:
-    print 'The vos package is only compatible with Python version 2.n'
-    sys.exit(-1)
-
-## Build the list of scripts to be installed.
-script_dir = 'scripts'
-scripts = []
-for script in os.listdir(script_dir):
-    if script[-1] in [ "~", "#"]:
-        continue
-    scripts.append(os.path.join(script_dir,script))
-
-try:
-    from setuptools import setup, find_packages
-    has_setuptools = True
-except:
-    from distutils.core import setup
-    has_setuptools = False
-
+from setuptools import setup, find_packages
 
 setup(name="datalab",
       version="2.0.3",
@@ -31,11 +7,11 @@ setup(name="datalab",
       author="M.J. Graham",
       author_email="graham@noao.edu",
       long_description="A command line tool for interacting with the NOAO Data Lab including VOSpace FUSE layer",
-      packages=find_packages(exclude=['test.*']),
-      package_data ={
-        'datalab': ['caps/*']
-      },
-      scripts=['scripts/datalab', 'scripts/mountvofs'],
+      packages=find_packages(exclude=['caps', 'scripts', 'test', 'vos', 'dl.excl']),
+      #package_data ={
+      #  'datalab': ['caps/*']
+      #},
+      #scripts=['scripts/datalab', 'scripts/mountvofs'],
       classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',
@@ -45,7 +21,7 @@ setup(name="datalab",
         'License :: OSI Approved :: GNU Affero General Public License v3',
         'Operating System :: POSIX',
         'Programming Language :: Python',
-        ], 
+      ],
       install_requires=['requests>=2.7', 'argparse', 'lxml', 'httplib2'],
       requires=['requests (>=2.7)', 'argparse', 'lxml', 'httplib2']
-      )
+     )
