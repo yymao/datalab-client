@@ -44,7 +44,7 @@ class storeClientError(Exception):
 
 def isAlive(svc_url=DEF_SERVICE_URL):
     """ Check whether the StorageManager service at the given URL is
-        alive and responding.  This is a simple call to the root 
+        alive and responding.  This is a simple call to the root
         service URL or ping() method.
     """
     try:
@@ -56,7 +56,7 @@ def isAlive(svc_url=DEF_SERVICE_URL):
     else:
         return (True if (output is not None and status_code == 200) else False)
 
-    
+
 # Pretty-printer for file sizes.
 def sizeof_fmt(num):
     for unit in ['B','K','M','G','T','P','E','Z']:
@@ -146,8 +146,8 @@ def get(token, fr, to, verbose = True):
                            headers=headers)
         r = requests.get(url.text, stream=False, headers=headers)
         return r.content
-    
-    
+
+
 # PUT -- Upload a file to the store manager service
 def put(token, fr, to, verbose=True):
     """
@@ -199,7 +199,7 @@ def put(token, fr, to, verbose=True):
         if r.status_code == 500:
             file = fr[fr.rfind('/') + 1:]
             nm += '/%s' % f
-            r = requests.get(DEF_SERVICE_URL + "/put?name=%s" % nm, 
+            r = requests.get(DEF_SERVICE_URL + "/put?name=%s" % nm,
                                 headers=headers)
 #        file = open(f).read()
 
@@ -209,7 +209,7 @@ def put(token, fr, to, verbose=True):
                 sys.stdout.write ("(%d / %d) %s -> " % (fnum, nfiles, f))
 
             # This should work for large data files - MJG 05/24/17
-            
+
             with open(f, 'rb') as file:
                 requests.put(r.content, data=file,
                      headers={'Content-type': 'application/octet-stream',
@@ -224,7 +224,7 @@ def put(token, fr, to, verbose=True):
             resp.append ("OK")
 
         fnum += 1
-        
+
 
 # LOAD -- Load a file from a remote endpoint to the store manager service
 def load(token, name, endpoint):
@@ -232,7 +232,7 @@ def load(token, name, endpoint):
     """
     r = getFromURL("/load?name=%s&endpoint=%s" % (name, endpoint), token)
 
-    
+
 # CP -- Copy a file/directory within the store manager service
 def cp(token, fr, to, verbose=False):
     """
@@ -275,7 +275,7 @@ def ln(token, fr, target):
     else:
         return "OK"
 
-    
+
 # LS -- Get a file/directory listing from the store manager service
 def ls(token, name, format = 'csv'):
     """
@@ -288,7 +288,7 @@ def ls(token, name, format = 'csv'):
 
     name : str
         Valid name of file or directory, e.g. ``vos://somedir``
-    
+
         .. todo:: [20161110] currently doesn't seem to work.
 
     format : str
@@ -323,22 +323,22 @@ def ls(token, name, format = 'csv'):
 
         return "\n".join(results)
 
-    
+
 # MKDIR -- Create a directory in the store manager service
 def mkdir (token, name):
     """
         Create a directory in the storage manager service
     """
     nm = (name if name.startswith("vos://") else ("vos://" + name))
-    
+
     try:
         r = getFromURL("/mkdir?dir=%s" % nm, token)
     except Exception:
         raise storeClientError(r.content)
     else:
         return "OK"
-        
-    
+
+
 # MV -- Move/rename a file/directory within the store manager service
 def mv(token, fr, to, verbose = False):
     """
@@ -367,15 +367,15 @@ def mv(token, fr, to, verbose = False):
             r = getFromURL("/mv?from=%s&to=%s" % (f, to_fname), token)
             fnum += 1
             resp.append(r)
-        return resp    
+        return resp
 
-    
+
 # RM -- Delete a file from the store manager service
 def rm(token, name, verbose = False):
     """
         Delete a file from the store manager service
     """
-    
+
     # Patch the names with the URI prefix if needed.
     nm = (name if name.startswith("vos://") else ("vos://" + name))
     if nm == "vos://" or nm == "vos://tmp" or nm == "vos://public":
@@ -400,7 +400,7 @@ def rm(token, name, verbose = False):
             resp.append(r)
         return resp
 
-    
+
 # RMDIR -- Delete a directory from the store manager service
 def rmdir(token, name):
     """
@@ -412,7 +412,7 @@ def rmdir(token, name):
     if nm == "vos://" or nm == "vos://tmp" or nm == "vos://public":
         return "Error: operation not permitted"
 
-    try:        
+    try:
         saveAs (token, "deleted", nm+"/.deleted")
         r = getFromURL("/rmdir?dir=%s" % nm, token)
     except Exception:
@@ -447,7 +447,7 @@ def saveAs(token, data, name):
 
     return "OK"
 
-        
+
 # TAG -- Annotate a file/directory in the store manager service
 def tag(token, name, tag):
     """
@@ -459,7 +459,7 @@ def tag(token, name, tag):
         raise storeClientError (r.content)
     else:
         return "OK"
-    
+
 
 # CREATE -- Create a node in the store manager service
 def create(token, name, type):
@@ -467,7 +467,7 @@ def create(token, name, type):
         Create a node in the store manager service
     """
     try:
-        r = getFromURL("/create?name=%s&type=%s" % (name, type), token)   
+        r = getFromURL("/create?name=%s&type=%s" % (name, type), token)
     except Exception:
         raise storeClientError(r.content)
     else:
@@ -544,13 +544,13 @@ def expandFileList(token, pattern, format, full=False):
         print ("%s --> '%s' '%s' '%s' => '%s'" % (pattern, uri, dir, name, pstr))
 
     return sorted(list)
-        
+
 
 # Get from a URL
 def getFromURL(path, token):
     try:
         resp = requests.get("%s%s" % (DEF_SERVICE_URL, path), headers = {"X-DL-AuthToken": token})
-    except Exception, e:
+    except Exception as e:
         raise storeClientError(e.message)
     return resp
 
@@ -563,8 +563,8 @@ def set_svc_url(svc_url):
     Parameters
     ----------
     svc_url : str
-        The service URL of the storage manager to use 
-    
+        The service URL of the storage manager to use
+
     Returns
     -------
 
@@ -595,13 +595,13 @@ def list_profiles(token, profile = None, format = 'text'):
 
     profile : str
         A specific profile to list
-        
+
     Returns
     -------
     profiles : list/dict
         A list of the names of the supported profiles or a dictionary of the
         specific profile
-    
+
     Example
     -------
 
@@ -610,20 +610,20 @@ def list_profiles(token, profile = None, format = 'text'):
         # get the list of profiles
         profiles = storeClient.list_profiles(token)
     """
-    
+
     headers = {'Content-Type': 'text/ascii', 'X-DL-AuthToken': token} # application/x-sql
-    dburl = '/profiles?' 
+    dburl = '/profiles?'
     if profile != None and profile != 'None' and profile != '':
         dburl += "profile=%s&" % profile
     dburl += "format=%s" % format
-    
+
     r = getFromURL(dburl, token)
     profiles = r.content
     if '{' in profiles:
 #        profiles = json.load(StringIO(profiles))
         profiles = json.loads(profiles)
     return profiles
-    
+
 
 # PROFILES -- Set the profile to be used
 #
@@ -637,7 +637,7 @@ def set_profile(profile):
 
     Returns
     -------
-    
+
     Example
     -------
 
@@ -646,10 +646,10 @@ def set_profile(profile):
         # set the profile
         storeClient.set_profile("default")
     """
-    
+
     global PROFILE
     PROFILE = profile
-        
+
 
 # PROFILES -- Set the profile to be used
 #
@@ -664,7 +664,7 @@ def get_profile(profile):
     profile : str
         The name of the current profile used with the storage manager service
 
-        
+
     Example
     -------
 
@@ -675,5 +675,5 @@ def get_profile(profile):
     """
 
     return PROFILE
-        
-    
+
+
