@@ -1,4 +1,0 @@
-requests>=2.7
-argparse
-lxml
-httplib2
